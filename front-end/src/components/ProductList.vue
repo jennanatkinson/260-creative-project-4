@@ -5,8 +5,8 @@
         <h4>{{ product.name }}</h4>
         <p>${{ product.price }}</p>
         <button class="shopButton"
-        @click="toggleFavorite(product.id)">
-          {{getFavoriteMessage(product.id)}}
+        @click="toggleFavorite(product)">
+          {{getFavoriteMessage(product)}}
         </button>
       </div>
       <div class="shop-item-picture small-image center" :id="'product' + product.id">
@@ -18,27 +18,49 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: "ProductList",
   props: {
-    products: Array,
+    products: [],
   },
   data() {
     return {
     }
   },
   methods: {
-    toggleFavorite(itemID) {
-      this.$root.$data.products[itemID - 1].attributes.favorite = !this.$root.$data.products[itemID - 1].attributes.favorite;
-    },
-    getFavoriteMessage(itemID) {
-      if (this.$root.$data.products[itemID - 1].attributes.favorite) {
-        return "Unfavorite"
+    toggleFavorite(item) {
+      if (item.favorite) {
+        //send unfavorite request
       }
       else {
-        return "Favorite"
+        //send favorite request
       }
-    }
+    },
+    async favoriteItem(item) {
+      try {
+        let response = await axios.put(`/api/users/${this.$root.$data.user._id}/favorite/${item.id}`);
+        this.$root.$data.user = response.data.user;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async unfavoriteItem(item) {
+      try {
+        let response = await axios.put(`/api/users/${this.$root.$data.user._id}/favorite/${item.id}`);
+        this.$root.$data.user = response.data.user;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getFavoriteMessage(item) {
+      if (item.favorite) {
+        return "Unfavorite";
+      }
+      else {
+        return "Favorite";
+      }
+    },
   }
 };
 </script>

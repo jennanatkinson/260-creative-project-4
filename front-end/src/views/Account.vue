@@ -6,7 +6,7 @@
     <div class="formContent">
       <div v-if="!accountCreated || showForm">
         <p>Please create a new account by filling out the information below:</p>
-        <form @submit.prevent="createAccount">
+        <form @submit.prevent="updateAccount">
           <input type="text" v-model="name" placeholder="Name">
           <p></p>
           <input type="text" v-model="email" placeholder="Email">
@@ -28,8 +28,8 @@
 
       </div>
       <div v-else class="center">
-        <h3>Hello {{accountName}}!</h3>
-        <p>{{accountEmail}}</p>
+        <h3>Hello {{name}}!</h3>
+        <p>{{email}}</p>
         <br />
         <div v-if="dairyFree || nutFree || vegan || glutenFree">
           <h4>Dietary attributes:</h4>
@@ -44,12 +44,14 @@
           <p>No dietary restrictions</p>
         </div>
         <p id="edit-button"><a @click="toggleForm">Edit your account</a></p>
+        <p id="delete-button"><a @click="deleteAccount">Delete your account</a></p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'Account',
   data() {
@@ -57,28 +59,28 @@ export default {
       name: "",
       email: "",
       glutenFree: false,
-      /*dairyFree: false,
+      dairyFree: false,
       nutFree: false,
-      vegan: false,*/
+      vegan: false,
       showForm: false
+    }
+  },
+  created() {
+    if (this.accountCreated) {
+      this.name = this.$root.$data.name;
+      this.email = this.$root.$data.email;
+      this.dairyFree = this.$root.$data.dairyFree;
+      this.nutFree = this.$root.$data.nutFree;
+      this.vegan = this.$root.$data.vegan;
     }
   },
   computed: {
     accountCreated() {
-      return (this.$root.$data.account.name !== "");
+      return (this.$root.$data.user !== null);
     },
-    account() {
-      return this.$root.$data.account;
-    },
-    accountName() {
-      return this.$root.$data.account.name;
-    },
-    accountEmail() {
-      return this.$root.$data.account.email;
-    },
-    dairyFree: {
+    /*dairyFree: {
       get: function() {
-        return this.$root.$data.account.allergyAttributes.dairyFree;
+        return this.$root.$data.user.allergyAttributes.dairyFree;
       },
       set: function(newValue) {
         this.$root.$data.account.allergyAttributes.dairyFree = newValue;
@@ -86,35 +88,82 @@ export default {
     },
     nutFree: {
       get: function() {
-        return this.$root.$data.account.allergyAttributes.nutFree;
+        return this.$root.$data.user.allergyAttributes.nutFree;
       },
       set: function(newValue) {
-        this.$root.$data.account.allergyAttributes.nutFree = newValue;
+        this.$root.$data.user.allergyAttributes.nutFree = newValue;
       }
     },
     vegan: {
       get: function() {
-        return this.$root.$data.account.allergyAttributes.vegan;
+        return this.$root.$data.user.allergyAttributes.vegan;
       },
       set: function(newValue) {
         this.$root.$data.account.allergyAttributes.vegan = newValue;
       }
-    },
-    accountAllergyAttributes() {
-      return this.$root.$data.account.allergyAttributes;
-    }
+    }*/
   },
   methods: {
-    createAccount() {
-      this.$root.$data.account.name = this.name;
-      this.$root.$data.account.email = this.email;
-      this.$root.$data.account.allergyAttributes.dairyFree = this.dairyFree;
-      this.$root.$data.account.allergyAttributes.nutFree = this.nutFree;
-      this.$root.$data.account.allergyAttributes.vegan = this.vegan;
-      this.showForm = false;
-    },
     toggleForm() {
       this.showForm = !this.showForm;
+    },
+    async updateAccount() {
+      if (this.$root.$data.user === null) {
+        this.createAccount();
+      }
+      else { //update account
+        try {
+          let response = await axios.put(`/api/users/${this.$root.$data.user._id}`, {
+            name: this.name,
+            email: this.email,
+            dairyFree: this.dairyFree,
+            nutFree: this.nutFree,
+            vegan: this.vegan
+          });
+          this.$root.$data.user = response.data.user;
+          this.showForm = false;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    async createAccount() {
+      try {
+        let response = await axios.post('/api/users', {
+          name: this.name,
+          email: this.email,
+          dairyFree: this.dairyFree,
+          nutFree: this.nutFree,
+          vegan: this.vegan
+        });
+        this.$root.$data.user = response.data.user;
+        this.showForm = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    /*async getUser() {
+      try {
+        const response = await axios.get(`/api/users/${this.$root.$data.user._id}`);
+        this.user = response.data.user;
+      } catch (error) {
+        console.log(error);  
+      }
+    },*/
+    async deleteAccount() {
+      try {
+        await axios.delete(`/api/users/${this.$root.$data.user._id}`);
+        this.$root.$data.user = null;
+        this.name = "";
+        this.email = "";
+        this.glutenFree = false;
+        this.dairyFree = false;
+        this.nutFree = false;
+        this.vegan = false;
+        this.showForm = false;
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 }
@@ -172,6 +221,14 @@ button:hover {
   color: grey;
 }
 #edit-button:hover {
+  color: black;
+  cursor: pointer;
+}
+#delete-button {
+  margin-top: 5px;
+  color: grey;
+}
+#delete-button:hover {
   color: black;
   cursor: pointer;
 }

@@ -42,7 +42,7 @@ export default {
       showNav: false
     };
   },
-  created() {
+  created() { //add get logged in user for lab5
     window.addEventListener("resize", this.handleView);
     this.handleView();
   },

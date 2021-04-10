@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import ProductList from "../components/ProductList.vue"
 export default {
   name: 'Shop',
@@ -37,7 +38,7 @@ export default {
     return {
       displayAllRadio: true,
       displayFavoritesRadio: false,
-      displaySafeFoodsRadio: false
+      displaySafeFoodsRadio: false,
     }
   },
   computed: {
@@ -52,38 +53,55 @@ export default {
     },
   },
   methods: {
-    displayAll() {
+    async displayAll() {
       this.displayFavoritesRadio = false;
       this.displaySafeFoodsRadio = false;
-      return this.$root.$data.products;
+      try {
+        let response = await axios.get('/api/products');
+        return this.setFavorites(response.data.products);
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
     },
-    displayFavorites() {
+    async displayFavorites() {
+      if (this.$root.$data.user === null) {
+        alert("Sorry! To use this feature, make an account");
+        return (this.displayAll());
+      }
       this.displayAllRadio = false;
       this.displaySafeFoodsRadio = false;
-      return this.$root.$data.products.filter(product => product.attributes.favorite);
+      try {
+        let response = await axios.get(`/api/users/${this.$root.$data.user._id}/favorite`);
+        return this.setFavorites(response.data.products);
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
     },
-    displaySafeFoods() {
-      if (this.$root.$data.account.name === "") {
+    async displaySafeFoods() {
+      if (this.$root.$data.user === null) {
         alert("Sorry! To use this feature, make an account and tell us your dietary restrictions");
         return (this.displayAll());
       }
       this.displayAllRadio = false;
       this.displayFavoritesRadio = false;
-      return this.$root.$data.products.filter(this.checkProduct);
+
+      try {
+        let response = await axios.get(`/api/users/${this.$root.$data.user._id}/allerginFriendly`);
+        return this.setFavorites(response.data.products);
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
     },
-    checkProduct(product) {
-      /*If the person is dairy free but the product is not*/
-      if (this.$root.$data.account.allergyAttributes.dairyFree && !product.attributes.dairyFree) {
-        return false;
-      }
-      if (this.$root.$data.account.allergyAttributes.nutFree && !product.attributes.nutFree) {
-        return false;
-      }
-      if (this.$root.$data.account.allergyAttributes.vegan && !product.attributes.vegan) {
-        return false;
-      }
-      return true;
-    },
+    setFavorites(products) {
+      this.$root.$data.user.favoriteProducts.forEach(element =>{
+        let index = products.findIndex(product => product.id === element.id);
+        products[index].favorite = true;
+      });
+      return products;
+    }
   }
 }
 </script>
