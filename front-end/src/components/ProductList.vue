@@ -4,7 +4,7 @@
       <div class="shop-item center">
         <h4>{{ product.name }}</h4>
         <p>${{ product.price }}</p>
-        <button class="shopButton"
+        <button v-if="user" class="shopButton"
         @click="toggleFavorite(product)">
           {{getFavoriteMessage(product)}}
         </button>
@@ -28,18 +28,32 @@ export default {
     return {
     }
   },
+  computed: {
+    user() {
+      return this.$root.$data.user !== null;
+    }
+  },
   methods: {
-    toggleFavorite(item) {
-      if (item.favorite) {
-        //send unfavorite request
+    async toggleFavorite(item) {
+      if (this.$root.$data.user === null) {
+        return;
       }
-      else {
-        //send favorite request
+      try {
+        if (item.favorite) { //send unfavorite request
+          await this.unfavoriteItem(item);
+        }
+        else { //send favorite request
+          await this.favoriteItem(item);
+        }
+        this.updateFavorites();
+        item.favorite = !item.favorite;
+      } catch (error) {
+        console.log(error);
       }
     },
     async favoriteItem(item) {
       try {
-        let response = await axios.put(`/api/users/${this.$root.$data.user._id}/favorite/${item.id}`);
+        let response = await axios.put(`/api/users/${this.$root.$data.user._id}/favorite/${item._id}`);
         this.$root.$data.user = response.data.user;
       } catch (error) {
         console.log(error);
@@ -47,7 +61,7 @@ export default {
     },
     async unfavoriteItem(item) {
       try {
-        let response = await axios.put(`/api/users/${this.$root.$data.user._id}/favorite/${item.id}`);
+        let response = await axios.put(`/api/users/${this.$root.$data.user._id}/favorite/${item._id}`);
         this.$root.$data.user = response.data.user;
       } catch (error) {
         console.log(error);
@@ -61,6 +75,17 @@ export default {
         return "Favorite";
       }
     },
+    async updateFavorites() {
+      if (this.$root.$data.user === null) {
+        return;
+      }
+      try {
+        let response = await axios.get(`/api/users/${this.$root.$data.user._id}/favorite`);
+        this.$root.$data.products.favorites = response.data.products;
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 };
 </script>

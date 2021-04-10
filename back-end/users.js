@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 //const argon2 = require("argon2"); // this is for salting passwords
 
 const router = express.Router();
+const products = require("./products.js");
 
 const userSchema = new mongoose.Schema({
   name: String,
@@ -19,6 +20,8 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
+
+const Product = products.model;
 
 
 /* API Endpoints */

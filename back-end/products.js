@@ -15,7 +15,8 @@ const productSchema = new mongoose.Schema({
     dairyFree: Boolean,
     nutFree: Boolean,
     vegan: Boolean
-  }
+  },
+  favorite: Boolean
 });
 
 // Create a model for products
@@ -34,7 +35,8 @@ router.post('/', async (req, res) => {
     dairyFree: req.body.dairyFree,
     nutFree: req.body.nutFree,
     vegan: req.body.vegan
-    }
+    },
+  favorite: false
   });
   try {
     await product.save();

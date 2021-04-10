@@ -5,7 +5,12 @@ import router from './router'
 Vue.config.productionTip = false
 
 let data = {
-  user: null
+  user: null,
+  products: {
+    all: [],
+    favorites: [],
+    safe: []
+  }
 }
 
 new Vue({

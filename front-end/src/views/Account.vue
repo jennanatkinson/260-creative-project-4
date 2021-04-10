@@ -67,41 +67,17 @@ export default {
   },
   created() {
     if (this.accountCreated) {
-      this.name = this.$root.$data.name;
-      this.email = this.$root.$data.email;
-      this.dairyFree = this.$root.$data.dairyFree;
-      this.nutFree = this.$root.$data.nutFree;
-      this.vegan = this.$root.$data.vegan;
+      this.name = this.$root.$data.user.name;
+      this.email = this.$root.$data.user.email;
+      this.dairyFree = this.$root.$data.user.allergyAttributes.dairyFree;
+      this.nutFree = this.$root.$data.user.allergyAttributes.nutFree;
+      this.vegan = this.$root.$data.user.allergyAttributes.vegan;
     }
   },
   computed: {
     accountCreated() {
       return (this.$root.$data.user !== null);
     },
-    /*dairyFree: {
-      get: function() {
-        return this.$root.$data.user.allergyAttributes.dairyFree;
-      },
-      set: function(newValue) {
-        this.$root.$data.account.allergyAttributes.dairyFree = newValue;
-      }
-    },
-    nutFree: {
-      get: function() {
-        return this.$root.$data.user.allergyAttributes.nutFree;
-      },
-      set: function(newValue) {
-        this.$root.$data.user.allergyAttributes.nutFree = newValue;
-      }
-    },
-    vegan: {
-      get: function() {
-        return this.$root.$data.user.allergyAttributes.vegan;
-      },
-      set: function(newValue) {
-        this.$root.$data.account.allergyAttributes.vegan = newValue;
-      }
-    }*/
   },
   methods: {
     toggleForm() {

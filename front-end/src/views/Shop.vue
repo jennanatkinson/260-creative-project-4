@@ -11,11 +11,11 @@
             <input type="radio" id="all" value="all" v-model="displayAllRadio" checked="checked" @click="displayAll">
             <label for="all">All</label>
           </div>
-          <div class="center">
+          <div class="center" v-if="user">
             <input type="radio" id="favorites" value="favorites" v-model="displayFavoritesRadio" @click="displayFavorites">
             <label for="favorites">Favorites</label>
           </div>
-          <div class="center">
+          <div class="center" v-if="user">
             <input type="radio" id="dietarySafe" value="dietarySafe" v-model="displaySafeFoodsRadio" @click="displaySafeFoods">
             <label for="dietarySafe">Dietary Safe</label>
           </div>
@@ -39,19 +39,26 @@ export default {
       displayAllRadio: true,
       displayFavoritesRadio: false,
       displaySafeFoodsRadio: false,
-      //products: []
     }
+  },
+  created() {
+    this.displayAll();
+    this.displaySafeFoods();
+    this.displayFavorites();
   },
   computed: {
     products() {
       if (this.displayFavoritesRadio) {
-        return this.displayFavorites();
+        return /*this.setFavorites(*/this.$root.$data.products.favorites;
       }
       if (this.displaySafeFoodsRadio) {
-        return this.displaySafeFoods();
+        return this.$root.$data.products.safe;
       }
-      return this.displayAll();
+      return this.$root.$data.products.all;
     },
+    user() {
+      return this.$root.$data.user !== null;
+    }
   },
   methods: {
     async displayAll() {
@@ -59,46 +66,46 @@ export default {
       this.displaySafeFoodsRadio = false;
       try {
         let response = await axios.get('/api/products');
-        return this.setFavorites(response.data.products);
+        this.$root.$data.products.all = response.data.products;
       } catch (error) {
         console.log(error);
-        return [];
       }
     },
     async displayFavorites() {
       if (this.$root.$data.user === null) {
-        alert("Sorry! To use this feature, make an account");
-        return (this.displayAll());
+        //alert("Please make an account to access this feature");
+        return;
       }
       this.displayAllRadio = false;
       this.displaySafeFoodsRadio = false;
       try {
         let response = await axios.get(`/api/users/${this.$root.$data.user._id}/favorite`);
-        return this.setFavorites(response.data.products);
+        this.$root.$data.products.favorites = response.data.products;
       } catch (error) {
         console.log(error);
-        return [];
       }
     },
     async displaySafeFoods() {
       if (this.$root.$data.user === null) {
-        alert("Sorry! To use this feature, make an account and tell us your dietary restrictions");
-        return (this.displayAll());
+        //alert("Please make an account to access this feature");
+        return;
       }
       this.displayAllRadio = false;
       this.displayFavoritesRadio = false;
 
       try {
         let response = await axios.get(`/api/users/${this.$root.$data.user._id}/allerginFriendly`);
-        return this.setFavorites(response.data.products);
+        this.$root.$data.products.safe = response.data.products;
       } catch (error) {
         console.log(error);
-        return [];
       }
     },
     setFavorites(products) {
-      this.$root.$data.user.favoriteProducts.forEach(element =>{
-        let index = products.findIndex(product => product.id === element.id);
+      if (this.$root.$data.user === null) {
+        return;
+      }
+      this.$root.$data.user.favoriteProducts.forEach(element => {
+        let index = products.findIndex(product => product._id === element._id);
         products[index].favorite = true;
       });
       return products;
