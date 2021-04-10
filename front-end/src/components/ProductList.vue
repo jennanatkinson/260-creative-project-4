@@ -80,6 +80,7 @@ export default {
         return;
       }
       try {
+        console.log(this.$root.$data.user._id);
         let response = await axios.get(`/api/users/${this.$root.$data.user._id}/favorite`);
         this.$root.$data.products.favorites = response.data.products;
       } catch (error) {

@@ -11,11 +11,11 @@
             <input type="radio" id="all" value="all" v-model="displayAllRadio" checked="checked" @click="displayAll">
             <label for="all">All</label>
           </div>
-          <div class="center" v-if="user">
+          <div class="center" v-if="accountCreated">
             <input type="radio" id="favorites" value="favorites" v-model="displayFavoritesRadio" @click="displayFavorites">
             <label for="favorites">Favorites</label>
           </div>
-          <div class="center" v-if="user">
+          <div class="center" v-if="accountCreated">
             <input type="radio" id="dietarySafe" value="dietarySafe" v-model="displaySafeFoodsRadio" @click="displaySafeFoods">
             <label for="dietarySafe">Dietary Safe</label>
           </div>
@@ -42,9 +42,9 @@ export default {
     }
   },
   created() {
-    this.displayAll();
     this.displaySafeFoods();
     this.displayFavorites();
+    this.displayAll();
   },
   computed: {
     products() {
@@ -56,9 +56,9 @@ export default {
       }
       return this.$root.$data.products.all;
     },
-    user() {
-      return this.$root.$data.user !== null;
-    }
+    accountCreated() {
+      return !(this.$root.$data.user === null || this.$root.$data.user === undefined);
+    },
   },
   methods: {
     async displayAll() {
@@ -72,7 +72,7 @@ export default {
       }
     },
     async displayFavorites() {
-      if (this.$root.$data.user === null) {
+      if (!this.accountCreated) {
         //alert("Please make an account to access this feature");
         return;
       }
@@ -86,7 +86,7 @@ export default {
       }
     },
     async displaySafeFoods() {
-      if (this.$root.$data.user === null) {
+      if (!this.accountCreated) {
         //alert("Please make an account to access this feature");
         return;
       }
@@ -101,7 +101,7 @@ export default {
       }
     },
     setFavorites(products) {
-      if (this.$root.$data.user === null) {
+      if (!this.accountCreated) {
         return;
       }
       this.$root.$data.user.favoriteProducts.forEach(element => {

@@ -88,7 +88,7 @@ const Product = products.model;
       user.allergyAttributes.vegan = req.body.vegan;
   
       user.save();
-      res.send(user);
+      res.send({user:user});
   } catch (error) {
       console.log(error);
       res.sendStatus(500);
@@ -115,7 +115,7 @@ const Product = products.model;
       user.favoriteProducts.push(product);
     }
     await user.save();
-    res.send(user);
+    res.send({user:user});
   } catch (error) {
       console.log(error);
       res.sendStatus(500);
@@ -144,7 +144,7 @@ const Product = products.model;
     }
     user.favoriteProducts.splice(index,1);
     await user.save();
-    res.send(user);
+    res.send({user:user});
     return;
   } catch (error) {
       console.log(error);

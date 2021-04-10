@@ -76,7 +76,7 @@ export default {
   },
   computed: {
     accountCreated() {
-      return (this.$root.$data.user !== null);
+      return !(this.$root.$data.user === null || this.$root.$data.user === undefined);
     },
   },
   methods: {
@@ -84,7 +84,7 @@ export default {
       this.showForm = !this.showForm;
     },
     async updateAccount() {
-      if (this.$root.$data.user === null) {
+      if (!this.accountCreated) {
         this.createAccount();
       }
       else { //update account
