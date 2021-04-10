@@ -39,6 +39,7 @@ export default {
       displayAllRadio: true,
       displayFavoritesRadio: false,
       displaySafeFoodsRadio: false,
+      //products: []
     }
   },
   computed: {
