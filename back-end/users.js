@@ -27,7 +27,7 @@ const User = mongoose.model('User', userSchema);
    module that imports this one to use a complete path, such as "/api/users" */
   
   /***Create a new user*/
-  app.post('/', async (req, res) => {
+  router.post('/', async (req, res) => {
     const user = new User({
     name: req.body.name,
     email: req.body.email,
@@ -48,7 +48,7 @@ const User = mongoose.model('User', userSchema);
   });
   
   /***Gets all users*/
-  app.get('/', async (req, res) => {
+  router.get('/', async (req, res) => {
     try {
       let users = await User.find();
       res.send({users: users});
@@ -59,7 +59,7 @@ const User = mongoose.model('User', userSchema);
   });
   
   /***Gets one user*/
-  /*app.get('/:userID', async (req, res) => {
+  /*router.get('/:userID', async (req, res) => {
     try {
       let user = await User.findOne({_id: req.params.userID});
       res.send({user: user});
@@ -71,7 +71,7 @@ const User = mongoose.model('User', userSchema);
   
   
   /***Update a user info*/
-  app.put('/:userID', async (req, res) => {
+  router.put('/:userID', async (req, res) => {
   try {
     let user = await User.findOne({_id: req.params.userID});
       if (!user) {
@@ -93,7 +93,7 @@ const User = mongoose.model('User', userSchema);
   });
   
   /***Update a user's favorites after favoriting*/
-  app.put('/:userID/favorite/:productID', async (req, res) => {
+  router.put('/:userID/favorite/:productID', async (req, res) => {
   try {
     let user = await User.findOne({_id: req.params.userID});
     if (!user) {
@@ -120,7 +120,7 @@ const User = mongoose.model('User', userSchema);
   });
   
   /***Update a user's favorites after unfavoriting*/
-  app.put('/:userID/unfavorite/:productID', async (req, res) => {
+  router.put('/:userID/unfavorite/:productID', async (req, res) => {
   try {
     let user = await User.findOne({_id: req.params.userID});
     if (!user) {
@@ -150,7 +150,7 @@ const User = mongoose.model('User', userSchema);
   });
   
   /***Deletes a single user*/
-  app.delete('/:userID', async (req, res) => {
+  router.delete('/:userID', async (req, res) => {
     try {
       await User.deleteOne({
         _id: req.params.userID
@@ -163,7 +163,7 @@ const User = mongoose.model('User', userSchema);
   });
   
   /***Get favorite products*/
-  app.get('/:userID/favorite', async (req, res) => {
+  router.get('/:userID/favorite', async (req, res) => {
     try {
       let user = await User.findOne({_id: req.params.userID}).populate('favoriteProducts'); //this is now an array of products, not ids
       if (!user) {
@@ -179,7 +179,7 @@ const User = mongoose.model('User', userSchema);
   });
   
   /***Get allergy friendly products*/
-  app.get('/:userID/allerginFriendly', async (req, res) => {
+  router.get('/:userID/allerginFriendly', async (req, res) => {
     try {
       let user = await User.findOne({_id: req.params.userID});
       if (!user) {

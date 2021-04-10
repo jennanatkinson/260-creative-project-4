@@ -7,8 +7,9 @@ Vue.config.productionTip = false
 let data = {
   user: null
 }
+
 new Vue({
-  router,
   data,
+  router,
   render: h => h(App)
 }).$mount('#app')

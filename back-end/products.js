@@ -24,7 +24,7 @@ const Product = mongoose.model('Product', productSchema);
 /* API Endpoints */
 
 /***Create a new product*/
-app.post('/', async (req, res) => {
+router.post('/', async (req, res) => {
   const product = new Product({
   name: req.body.name,
   price: req.body.price,
@@ -46,7 +46,7 @@ app.post('/', async (req, res) => {
 });
 
 /***Returns all products*/
-app.get('/', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     let products = await Product.find();
     res.send({products: products});
@@ -57,7 +57,7 @@ app.get('/', async (req, res) => {
 });
 
 /***Deletes all the products, just in case I need to clear them*/
-app.delete('/', async (req, res) => {
+router.delete('/', async (req, res) => {
   try {
     await Product.deleteMany();
 
@@ -74,7 +74,7 @@ app.delete('/', async (req, res) => {
 });
 
 /***Deletes one product*/
-app.delete('/:productID', async (req, res) => {
+router.delete('/:productID', async (req, res) => {
   try {
     await Product.deleteOne({
       _id: req.params.productID
