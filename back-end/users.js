@@ -110,6 +110,7 @@ const Product = products.model;
       res.sendStatus(404);
       return;
     }
+    product.favorite = true;
     /*If the product isn't already in the user's favorites*/
     if (user.favoriteProducts.indexOf(product._id) === -1) {
       user.favoriteProducts.push(product);
@@ -165,6 +166,32 @@ const Product = products.model;
     }
   });
   
+  /***Returns all products with a user's favorites*/
+router.get('/:userID/all', async (req, res) => {
+  try {
+    let user = await User.findOne({_id: req.params.userID});
+    if (!user) {
+      console.log("User not found");
+      res.sendStatus(404);
+      return;
+    }
+    let products = await Product.find();
+
+    products.forEach(function(element) {
+      if (user.favoriteProducts.some(product => product._id.equals(element._id))) {
+        element.favorite = true;
+      }
+      else {
+        element.favorite = false;
+      }
+    });
+    res.send({products: products});
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+});
+
   /***Get favorite products*/
   router.get('/:userID/favorite', async (req, res) => {
     try {
@@ -173,6 +200,9 @@ const Product = products.model;
           res.sendStatus(404);
           return;
       }
+      user.favoriteProducts.forEach(product => {
+        product.favorite = true;
+      });
       res.send({products: user.favoriteProducts});
   
     } catch (error) {
@@ -205,6 +235,15 @@ const Product = products.model;
           return false;
         }
         return true;
+      });
+
+      allerginFriendlyProducts.forEach(function(element) {
+        if (user.favoriteProducts.some(product => product._id.equals(element._id))) {
+          element.favorite = true;
+        }
+        else {
+          element.favorite = false;
+        }
       });
       
       res.send({products: allerginFriendlyProducts});

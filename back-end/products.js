@@ -64,10 +64,10 @@ router.delete('/', async (req, res) => {
     await Product.deleteMany();
 
     /*Removes all the user's favorites*/
-    let users = await User.find();
+    /*let users = await User.find();
     users.forEach(function(user) {
       user.favoriteProducts = [];
-    });
+    });*/
     res.sendStatus(200);
   } catch (error) {
     console.log(error);
@@ -83,13 +83,13 @@ router.delete('/:productID', async (req, res) => {
     });
 
     /*Deletes the product from anyone's favorites*/
-    let users = await User.find();
+    /*let users = await User.find();
     for(let i = 0; i < users.length; i++) {
       for (let j = 0; j < users[i].favoriteProducts.length; j++) {
         users[i].favoriteProducts.splice(i,1);
         await users[i].save();
       }
-    }
+    }*/
     res.sendStatus(200);
   } catch (error) {
     console.log(error);

@@ -28,7 +28,7 @@
     <!--Footer-->
     <div class="footer">
       <p>© Jenna Atkinson, 2021</p>
-      <a href="https://github.com/jsunshine321/260-creative-project-3">Git Hub Repository</a>
+      <a href="https://github.com/jsunshine321/260-creative-project-4">Git Hub Repository</a>
     </div>
   </div>
 </template>

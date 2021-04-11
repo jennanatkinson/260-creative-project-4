@@ -42,14 +42,15 @@ export default {
     }
   },
   created() {
-    this.displaySafeFoods();
-    this.displayFavorites();
-    this.displayAll();
+    this.getSafeFoods();
+    this.getFavorites();
+    this.getAllProducts();
   },
   computed: {
     products() {
       if (this.displayFavoritesRadio) {
-        return /*this.setFavorites(*/this.$root.$data.products.favorites;
+        return this.$root.$data.products.favorites;
+        //return this.$root.$data.user.favoriteProducts;
       }
       if (this.displaySafeFoodsRadio) {
         return this.$root.$data.products.safe;
@@ -64,9 +65,18 @@ export default {
     async displayAll() {
       this.displayFavoritesRadio = false;
       this.displaySafeFoodsRadio = false;
+      this.getAllProducts();
+    },
+    async getAllProducts() {
       try {
-        let response = await axios.get('/api/products');
-        this.$root.$data.products.all = response.data.products;
+        if (this.accountCreated) {
+          let response = await axios.get(`/api/users/${this.$root.$data.user._id}/all`);
+          this.$root.$data.products.all = response.data.products;
+        }
+        else {
+          let response = await axios.get('/api/products');
+          this.$root.$data.products.all = response.data.products;
+        }
       } catch (error) {
         console.log(error);
       }
@@ -78,6 +88,12 @@ export default {
       }
       this.displayAllRadio = false;
       this.displaySafeFoodsRadio = false;
+      this.getFavorites();
+    },
+    async getFavorites() {
+      if (!this.accountCreated) {
+        return;
+      }
       try {
         let response = await axios.get(`/api/users/${this.$root.$data.user._id}/favorite`);
         this.$root.$data.products.favorites = response.data.products;
@@ -92,24 +108,34 @@ export default {
       }
       this.displayAllRadio = false;
       this.displayFavoritesRadio = false;
-
+      this.getSafeFoods();
+    },
+    async getSafeFoods() {
+      if (!this.accountCreated) {
+        return;
+      }
       try {
         let response = await axios.get(`/api/users/${this.$root.$data.user._id}/allerginFriendly`);
         this.$root.$data.products.safe = response.data.products;
       } catch (error) {
         console.log(error);
       }
-    },
-    setFavorites(products) {
+    }
+    /*setFavorites(products) {
+      console.log("Shop Set Favorites");
       if (!this.accountCreated) {
-        return;
+        return products;
       }
-      this.$root.$data.user.favoriteProducts.forEach(element => {
-        let index = products.findIndex(product => product._id === element._id);
-        products[index].favorite = true;
+      products.forEach(element => {
+        if (this.$root.$data.user.favoriteProducts.findIndex(product => product._id === element._id) != -1) {//if you find that element {
+          element.favorite = true;
+        }
+        else {
+          element.favorite = false;
+        }
       });
       return products;
-    }
+    }*/
   }
 }
 </script>
