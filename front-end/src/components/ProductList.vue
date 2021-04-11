@@ -45,11 +45,6 @@ export default {
         else { //send favorite request
           await this.favoriteItem(item);
         }
-        //this.$root.$data.products.favorites = [];
-        //this.updateFavoriteList(); //gets the favorite list again
-        //this.resetProductLists(); //sets all the favorite information in all the lists
-        //this.setFavorite(item, !item.favorite);
-        //item.favorite = !item.favorite;
         this.$parent.getSafeFoods();
         this.$parent.getFavorites();
         this.$parent.getAllProducts();
@@ -57,16 +52,6 @@ export default {
         console.log(error);
       }
     },
-    /*setFavorite(item, value) {
-      let index = this.$root.$data.products.all.findIndex(product => product._id === item._id);
-      if (index !== -1) {
-        this.$root.$data.products.all[index].favorite = value;
-      }
-      index = this.$root.$data.products.safe.findIndex(product => product._id === item._id);
-      if (index !== -1) {
-        this.$root.$data.products.safe[index].favorite = value;
-      }
-    },*/
     async favoriteItem(item) {
       try {
         let response = await axios.put(`/api/users/${this.$root.$data.user._id}/favorite/${item._id}`);
@@ -91,40 +76,6 @@ export default {
         return "Favorite";
       }
     },
-    /*async updateFavoriteList() {
-      if (!this.accountCreated) {
-        return;
-      }
-      try {
-        let response = await axios.get(`/api/users/${this.$root.$data.user._id}/favorite`);
-        this.$root.$data.products.favorites = response.data.products;
-      } catch (error) {
-        console.log(error);
-      }
-    },*/
-    /*resetProductLists() {
-      //console.log("Product List Reset Product Lists");
-      //this.$root.$data.products.favorites.forEach(product => {
-        //product.favorite = true;
-      //});
-      //this.$root.$data.products.favorites = this.setFavorites(this.$root.$data.products.favorites);
-      this.$root.$data.products.safe = this.setFavorites(this.$root.$data.products.safe);
-      this.$root.$data.products.all = this.setFavorites(this.$root.$data.products.all);
-    },
-    setFavorites(products) {
-      if (!this.accountCreated) {
-        return products;
-      }
-      products.forEach(element => {
-        if (this.$root.$data.user.favoriteProducts.findIndex(product => product._id === element._id) != -1) {//if you find that element {
-          element.favorite = true;
-        }
-        else {
-          element.favorite = false;
-        }
-      });
-      return products;
-    }*/
   }
 };
 </script>
@@ -140,12 +91,6 @@ h4 {
   margin-bottom: 20px;
   background-size: cover;
 }
-/*This makes the scallable square work*/
-/*.small-image:after { 
-  content: "";
-  display: block;
-  padding-bottom: 100%;
-}*/
 .content {
   display: block;
   margin-top: 30px;

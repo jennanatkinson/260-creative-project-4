@@ -50,7 +50,6 @@ export default {
     products() {
       if (this.displayFavoritesRadio) {
         return this.$root.$data.products.favorites;
-        //return this.$root.$data.user.favoriteProducts;
       }
       if (this.displaySafeFoodsRadio) {
         return this.$root.$data.products.safe;
@@ -121,21 +120,6 @@ export default {
         console.log(error);
       }
     }
-    /*setFavorites(products) {
-      console.log("Shop Set Favorites");
-      if (!this.accountCreated) {
-        return products;
-      }
-      products.forEach(element => {
-        if (this.$root.$data.user.favoriteProducts.findIndex(product => product._id === element._id) != -1) {//if you find that element {
-          element.favorite = true;
-        }
-        else {
-          element.favorite = false;
-        }
-      });
-      return products;
-    }*/
   }
 }
 </script>
